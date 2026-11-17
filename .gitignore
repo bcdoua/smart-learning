@@ -22,3 +22,6 @@
 tmp_render/
 docx_render_check/
 ###< projet DevOps ###
+
+/public/uploads/*
+!/public/uploads/.gitkeep
