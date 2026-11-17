@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }} — SmartLearn{% endblock %}
+
+{% block body %}
+
+{# Page Heading #}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-edit mr-2 text-primary"></i>
+        {% if form.vars.data.id is defined and form.vars.data.id %}
+            Modifier — {{ title }} #{{ form.vars.data.id }}
+        {% else %}
+            Ajouter — {{ title }}
+        {% endif %}
+    </h1>
+    <a href="javascript:history.back()" class="btn btn-secondary btn-icon-split shadow-sm">
+        <span class="icon text-white-50"><i class="fas fa-arrow-left"></i></span>
+        <span class="text">Retour</span>
+    </a>
+</div>
+
+{# Breadcrumb #}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb bg-white shadow-sm px-3 py-2 rounded">
+        <li class="breadcrumb-item">
+            <a href="{{ path('teacher_dashboard') }}"><i class="fas fa-home mr-1"></i>Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="javascript:history.back()">{{ title }}</a>
+        </li>
+        <li class="breadcrumb-item active">
+            {% if form.vars.data.id is defined and form.vars.data.id %}
+                Modifier #{{ form.vars.data.id }}
+            {% else %}
+                Nouveau
+            {% endif %}
+        </li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-xl-8 col-lg-10 mx-auto">
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    {% if form.vars.data.id is defined and form.vars.data.id %}
+                        <i class="fas fa-pen mr-2"></i> Modifier — {{ title }}
+                    {% else %}
+                        <i class="fas fa-plus-circle mr-2"></i> Nouveau — {{ title }}
+                    {% endif %}
+                </h6>
+                <div>
+                    <button type="submit" form="teacherForm" class="btn btn-circle btn-success" title="Sauvegarder">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <a href="javascript:history.back()" class="btn btn-circle btn-danger ml-1" title="Annuler">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+
+                {{ form_start(form, {attr: {
+                    id: 'teacherForm',
+                    novalidate: 'novalidate',
+                    enctype: 'multipart/form-data'
+                }}) }}
+
+                {% for field in form %}
+                    {% if field.vars.name != '_token' %}
+                    <div class="form-group row align-items-start">
+                        <label class="col-sm-3 col-form-label font-weight-bold small text-right text-gray-700 pt-2">
+                            {{ form_label(field) }}
+                            {% if field.vars.required %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+                        <div class="col-sm-9">
+                            {% set prefixes = field.vars.block_prefixes|join(' ') %}
+                            {% if prefixes matches '/checkbox/' %}
+                                <div class="custom-control custom-switch mt-2">
+                                    {{ form_widget(field, {attr: {class: 'custom-control-input'}}) }}
+                                    <label class="custom-control-label" for="{{ field.vars.id }}">Activer</label>
+                                </div>
+                            {% elseif prefixes matches '/file/' %}
+                                <div class="custom-file">
+                                    {{ form_widget(field, {attr: {class: 'custom-file-input', id: field.vars.id}}) }}
+                                    <label class="custom-file-label" for="{{ field.vars.id }}">Choisir un fichier...</label>
+                                </div>
+                                <small class="form-text text-muted mt-1">
+                                    <i class="fas fa-info-circle mr-1"></i> Formats acceptés selon le champ.
+                                </small>
+                            {% elseif prefixes matches '/textarea/' %}
+                                {{ form_widget(field, {attr: {class: 'form-control', rows: 4}}) }}
+                            {% elseif prefixes matches '/choice/' or prefixes matches '/entity/' %}
+                                {{ form_widget(field, {attr: {class: 'form-control custom-select'}}) }}
+                            {% else %}
+                                {{ form_widget(field, {attr: {class: 'form-control'}}) }}
+                            {% endif %}
+                            {% if form_errors(field) %}
+                            <div class="invalid-feedback d-block">
+                                <i class="fas fa-exclamation-circle mr-1"></i>{{ form_errors(field) }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                {{ form_rest(form) }}
+
+                <hr class="my-4">
+                <div class="d-flex justify-content-between">
+                    <a href="javascript:history.back()" class="btn btn-secondary btn-icon-split">
+                        <span class="icon text-white-50"><i class="fas fa-times"></i></span>
+                        <span class="text">Annuler</span>
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-icon-split">
+                        <span class="icon text-white-50"><i class="fas fa-save"></i></span>
+                        <span class="text">
+                            {% if form.vars.data.id is defined and form.vars.data.id %}
+                                Mettre à jour
+                            {% else %}
+                                Enregistrer
+                            {% endif %}
+                        </span>
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        {# Info card #}
+        <div class="card border-left-info shadow mb-4">
+            <div class="card-body py-3">
+                <div class="row no-gutters align-items-center">
+                    <div class="col-auto mr-3">
+                        <i class="fas fa-info-circle fa-2x text-info"></i>
+                    </div>
+                    <div class="col">
+                        <div class="font-weight-bold text-info small text-uppercase mb-1">Information</div>
+                        <div class="text-gray-700 small">
+                            Les champs marqués <span class="text-danger font-weight-bold">*</span> sont obligatoires.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(document).ready(function () {
+    $('.custom-file-input').on('change', function () {
+        var fileName = $(this).val().split('\\').pop();
+        $(this).next('.custom-file-label').html(fileName || 'Choisir un fichier...');
+    });
+});
+</script>
+{% endblock %}

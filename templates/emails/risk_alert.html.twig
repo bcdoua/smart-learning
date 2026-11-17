@@ -1,0 +1,7 @@
+<div style="font-family:Arial,sans-serif;background:#f6f8fb;padding:24px">
+    <div style="max-width:620px;margin:auto;background:#fff;border-radius:8px;padding:24px">
+        <h1>Suivi personnalise</h1>
+        <p>Bonjour {{ user.name }}, votre score de risque est de {{ risk.score }}%.</p>
+        <p>Raisons: {{ risk.reasons|join(', ') }}. Nous vous recommandons de reprendre vos cours et de contacter votre enseignant.</p>
+    </div>
+</div>

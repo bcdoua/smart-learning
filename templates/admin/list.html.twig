@@ -1,0 +1,193 @@
+{% extends 'base.html.twig' %}
+{% from 'partials/_crud_actions.html.twig' import crud_actions %}
+{% block title %}{{ title }} — SmartLearn{% endblock %}
+
+{% block body %}
+
+{# ===== PAGE HEADING ===== #}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-fw fa-list mr-2 text-primary"></i> {{ title }}
+    </h1>
+    <a href="{{ path(route_new) }}" class="btn btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm mr-1"></i> + Nouveau
+    </a>
+</div>
+
+{# ===== BREADCRUMB ===== #}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb shadow-sm px-3 py-2 rounded">
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_dashboard') }}"><i class="fas fa-home mr-1"></i>Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</nav>
+
+{# ===== STAT CARDS ===== #}
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ items.getTotalItemCount }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-database fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Cette page</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ items|length }} entrée(s)</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-list fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Actions</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <i class="fas fa-edit text-warning mr-1"></i>
+                            <i class="fas fa-trash text-danger mr-1"></i>
+                            Modifier / Supprimer
+                        </div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-cogs fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ===== SEARCH ===== #}
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-search mr-2"></i> Recherche
+        </h6>
+        {% if app.request.query.get('q') %}
+        <span class="badge badge-warning">Filtre : "{{ app.request.query.get('q') }}"</span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <form method="get">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-primary text-white"><i class="fas fa-search"></i></span>
+                </div>
+                <input class="form-control" type="text" name="q"
+                       value="{{ app.request.query.get('q') }}"
+                       placeholder="Rechercher dans {{ title|lower }}...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search mr-1"></i> Rechercher
+                    </button>
+                    {% if app.request.query.get('q') %}
+                    <a href="{{ app.request.pathinfo }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times mr-1"></i> Effacer
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ===== TABLE ===== #}
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-table mr-2"></i> {{ title }}
+            <span class="badge badge-primary ml-1">{{ items.getTotalItemCount }}</span>
+        </h6>
+        <a href="{{ path(route_new) }}" class="btn btn-success btn-sm">
+            <i class="fas fa-plus mr-1"></i> Nouveau
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" width="100%" cellspacing="0">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-center border-0" width="50">#</th>
+                        {% for col_key, col_label in columns %}
+                            <th class="border-0">{{ col_label }}</th>
+                        {% endfor %}
+                        <th class="text-center border-0" width="160">
+                            <i class="fas fa-cogs mr-1"></i> Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td class="text-center align-middle">
+                            <span class="badge badge-light border text-muted">{{ item.id }}</span>
+                        </td>
+                        {% for col_path, col_label in columns %}
+                            {% set value = item %}
+                            {% for part in col_path|split('.') %}
+                                {% set value = attribute(value, part) is defined ? attribute(value, part) : '' %}
+                            {% endfor %}
+                            <td class="align-middle">
+                                {% if value is iterable %}
+                                    {{ value|join(', ') }}
+                                {% elseif value.timestamp is defined %}
+                                    {{ value|date('d/m/Y') }}
+                                {% else %}
+                                    {{ value }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+
+                        {# ===== ACTION BUTTONS via macro ===== #}
+                        <td class="align-middle" style="white-space:nowrap;">
+                            {{ crud_actions(
+                                item,
+                                edit_route,
+                                delete_route is defined ? delete_route : null,
+                                entity_name is defined ? entity_name : 'item'
+                            ) }}
+                        </td>
+                    </tr>
+
+                {% else %}
+                    <tr>
+                        <td colspan="{{ columns|length + 2 }}" class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-gray-300 mb-3 d-block"></i>
+                            <p class="text-muted mb-3">Aucun élément trouvé.</p>
+                            <a href="{{ path(route_new) }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus mr-1"></i> Ajouter le premier
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# ===== PAGINATION ===== #}
+        <div class="d-flex justify-content-between align-items-center px-3 py-3 border-top">
+            <div class="text-muted small">
+                Total : <strong>{{ items.getTotalItemCount }}</strong> entrée(s)
+            </div>
+            <div class="knp-paginator">
+                {{ knp_pagination_render(items) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

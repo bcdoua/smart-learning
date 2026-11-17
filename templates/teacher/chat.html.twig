@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+{% block title %}Chat Temps Réel — SmartLearn{% endblock %}
+
+{% block body %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-comments mr-2 text-primary"></i> Chat temps réel
+    </h1>
+    <span class="badge badge-success" style="font-size:.85rem;">
+        <i class="fas fa-circle mr-1" style="font-size:.5rem;"></i> En ligne
+    </span>
+</div>
+
+<div class="row">
+
+    {# Messages feed #}
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-comments mr-2"></i> Messages des étudiants
+                </h6>
+            </div>
+            <div class="card-body p-3">
+                <div class="chat-feed" id="chatFeed">
+                    {% for message in messages %}
+                    <div class="bubble {{ message.sender.id == app.user.id ? 'me' : '' }}">
+                        <strong>
+                            <i class="fas fa-{{ message.sender.id == app.user.id ? 'chalkboard-teacher' : 'user-graduate' }} mr-1"></i>
+                            {{ message.sender.name }}
+                        </strong>
+                        <p>{{ message.content }}</p>
+                        <div class="small text-muted">{{ message.createdAt|date('d/m/Y H:i') }}</div>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-comments fa-3x mb-3"></i>
+                        <p>Aucun message pour le moment.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Send form #}
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-paper-plane mr-2"></i> Répondre
+                </h6>
+            </div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="form-group">
+                    <label class="small font-weight-bold">Votre message</label>
+                    {{ form_widget(form.content, {attr: {class: 'form-control', rows: 5, placeholder: 'Répondez aux étudiants...'}}) }}
+                    {{ form_errors(form.content) }}
+                </div>
+                {{ form_rest(form) }}
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-paper-plane mr-2"></i> Envoyer
+                </button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

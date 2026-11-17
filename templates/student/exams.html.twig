@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+{% block title %}Examens & Résultats — SmartLearn{% endblock %}
+
+{% block body %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-clipboard-check mr-2 text-primary"></i> Examens & Résultats
+    </h1>
+</div>
+
+{# Breadcrumb #}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb bg-white shadow-sm px-3 py-2 rounded">
+        <li class="breadcrumb-item">
+            <a href="{{ path('student_dashboard') }}"><i class="fas fa-home mr-1"></i>Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Examens & Résultats</li>
+    </ol>
+</nav>
+
+{# Stats #}
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Examens disponibles</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ exams|length }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-clipboard-list fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Mes résultats</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ results|length }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-poll fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    {# Exams list #}
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-clipboard-list mr-2"></i> Examens disponibles
+                    <span class="badge badge-primary ml-1">{{ exams|length }}</span>
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                {% if exams is empty %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-clipboard fa-3x mb-3 text-gray-300"></i>
+                    <p>Aucun examen disponible.</p>
+                </div>
+                {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="text-primary">Titre</th>
+                                <th class="text-primary text-center">Durée</th>
+                                <th class="text-primary text-center">Score min</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for exam in exams %}
+                        <tr>
+                            <td class="font-weight-bold">{{ exam.title }}</td>
+                            <td class="text-center">
+                                <span class="badge badge-info">
+                                    <i class="fas fa-clock mr-1"></i>{{ exam.duration }} min
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge badge-warning">{{ exam.passingScore }}/20</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Results #}
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-success">
+                    <i class="fas fa-poll mr-2"></i> Mes résultats
+                    <span class="badge badge-success ml-1">{{ results|length }}</span>
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                {% if results is empty %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-poll fa-3x mb-3 text-gray-300"></i>
+                    <p>Aucun résultat disponible.</p>
+                </div>
+                {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="text-primary">Examen</th>
+                                <th class="text-primary text-center">Note</th>
+                                <th class="text-primary text-center">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for result in results %}
+                        {% set passed = result.score >= result.exam.passingScore %}
+                        <tr>
+                            <td class="font-weight-bold">{{ result.exam.title }}</td>
+                            <td class="text-center">
+                                <span class="font-weight-bold {{ passed ? 'text-success' : 'text-danger' }}">
+                                    {{ result.score }}/20
+                                </span>
+                                <div class="progress mt-1" style="height:4px;">
+                                    <div class="progress-bar bg-{{ passed ? 'success' : 'danger' }}"
+                                         style="width:{{ result.score > 100 ? 100 : (result.score < 0 ? 0 : result.score|round) }}%"></div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge badge-{{ result.status == 'passed' ? 'success' : (result.status == 'failed' ? 'danger' : 'secondary') }}">
+                                    {{ result.status == 'passed' ? 'Réussi' : (result.status == 'failed' ? 'Échoué' : result.status) }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

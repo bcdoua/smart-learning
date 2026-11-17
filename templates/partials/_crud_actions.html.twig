@@ -1,0 +1,63 @@
+{#
+  Reusable CRUD action buttons macro — SB Admin 2 style
+  Usage:
+    {% from 'partials/_crud_actions.html.twig' import crud_actions %}
+    {{ crud_actions(item, edit_route, delete_route|default(null), entity_name|default('item')) }}
+#}
+
+{% macro crud_actions(item, edit_route, delete_route, entity_name) %}
+
+    {# ── Modifier ── #}
+    <a href="{{ path(edit_route, {id: item.id}) }}"
+       class="btn btn-warning btn-sm"
+       title="Modifier">
+        <i class="fas fa-edit"></i> Modifier
+    </a>
+
+    {# ── Supprimer ── #}
+    {% if delete_route %}
+    <button type="button"
+            class="btn btn-danger btn-sm"
+            title="Supprimer"
+            data-toggle="modal"
+            data-target="#crudDel{{ item.id }}">
+        <i class="fas fa-trash"></i> Supprimer
+    </button>
+
+    {# Delete confirmation modal #}
+    <div class="modal fade" id="crudDel{{ item.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-danger text-white py-2">
+                    <h6 class="modal-title mb-0">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> Confirmer la suppression
+                    </h6>
+                    <button type="button" class="close text-white py-0" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center py-3">
+                    <i class="fas fa-trash-alt fa-2x text-danger mb-2 d-block"></i>
+                    <p class="mb-0">Supprimer l'élément <strong>#{{ item.id }}</strong> ?</p>
+                    <p class="text-muted small mt-1 mb-0">Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer justify-content-center py-2 border-0">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
+                    <form method="post"
+                          action="{{ path(delete_route, {id: item.id}) }}"
+                          style="display:inline;margin:0;">
+                        <input type="hidden" name="_token"
+                               value="{{ csrf_token('delete_' ~ entity_name ~ '_' ~ item.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash mr-1"></i>Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+{% endmacro %}

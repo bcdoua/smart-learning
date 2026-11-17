@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+{% block title %}Assistant IA — SmartLearn{% endblock %}
+
+{% block body %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-robot mr-2 text-primary"></i> Assistant IA SmartLearn
+    </h1>
+    <span class="badge badge-success" style="font-size:.85rem;">
+        <i class="fas fa-circle mr-1" style="font-size:.5rem;"></i> En ligne
+    </span>
+</div>
+
+<div class="row">
+
+    {# Chat feed #}
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3 d-flex align-items-center">
+                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mr-3"
+                     style="width:40px;height:40px;">
+                    <i class="fas fa-robot text-white"></i>
+                </div>
+                <div>
+                    <div class="font-weight-bold">SmartLearn IA</div>
+                    <div class="small text-muted">Votre tuteur intelligent</div>
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="chat-feed" id="aiFeed">
+                    {# Welcome message #}
+                    <div class="bubble ai">
+                        <strong><i class="fas fa-robot mr-1"></i> SmartLearn IA</strong>
+                        <p>Bonjour ! Je suis votre assistant pédagogique. Posez-moi vos questions sur vos cours et je ferai de mon mieux pour vous aider.</p>
+                    </div>
+
+                    {% for item in history|reverse %}
+                    <div class="bubble me">
+                        <strong><i class="fas fa-user mr-1"></i> Moi</strong>
+                        <p>{{ item.question }}</p>
+                    </div>
+                    <div class="bubble ai">
+                        <strong><i class="fas fa-robot mr-1"></i> SmartLearn IA</strong>
+                        <p>{{ item.answer|nl2br }}</p>
+                        <div class="small text-muted mt-1">
+                            <i class="fas fa-microchip mr-1"></i> {{ item.provider }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Input form #}
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-paper-plane mr-2"></i> Poser une question
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="aiForm" data-url="{{ path('student_chatbot_ask') }}">
+                    <div class="form-group">
+                        <label class="small font-weight-bold">Votre question</label>
+                        <textarea class="form-control" name="question" rows="5"
+                                  placeholder="Ex: Explique-moi le concept de récursivité..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-paper-plane mr-2"></i> Envoyer
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {# Tips card #}
+        <div class="card shadow mt-3">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">
+                    <i class="fas fa-lightbulb mr-2"></i> Conseils
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small text-muted mb-0">
+                    <li class="mb-2"><i class="fas fa-check text-success mr-2"></i> Soyez précis dans vos questions</li>
+                    <li class="mb-2"><i class="fas fa-check text-success mr-2"></i> Mentionnez le cours concerné</li>
+                    <li class="mb-2"><i class="fas fa-check text-success mr-2"></i> Demandez des exemples concrets</li>
+                    <li><i class="fas fa-check text-success mr-2"></i> Posez des questions de révision</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

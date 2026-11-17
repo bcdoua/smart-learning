@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+{% block title %}Dashboard Étudiant — SmartLearn{% endblock %}
+
+{% block body %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-user-graduate mr-2 text-primary"></i> Espace Étudiant
+    </h1>
+    <a href="{{ path('student_chatbot') }}" class="btn btn-primary shadow-sm">
+        <i class="fas fa-robot fa-sm mr-1"></i> Assistant IA
+    </a>
+</div>
+
+{# Quick stats #}
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Cours disponibles</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ courses|length }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-book-open fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Recommandations IA</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ recommendations|length }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-robot fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Notifications</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ app.user.notifications|filter(n => not n.isRead)|length }}
+                        </div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-bell fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Mes inscriptions</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ app.user.enrollments|length }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-graduation-cap fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# AI Recommendations #}
+{% if recommendations is not empty %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-robot mr-2"></i> Recommandations intelligentes
+        </h6>
+        <span class="badge badge-primary">IA</span>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for rec in recommendations %}
+            <div class="col-xl-4 col-md-6 mb-3">
+                <div class="card border-left-success h-100">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div>
+                                <div class="font-weight-bold text-gray-800">{{ rec.course.title }}</div>
+                                <div class="small text-muted mt-1">
+                                    <span class="badge badge-primary">{{ rec.course.level }}</span>
+                                    {% if rec.course.category %}
+                                    <span class="badge badge-info ml-1">{{ rec.course.category }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="text-right ml-2">
+                                <div class="small text-success font-weight-bold">Score</div>
+                                <div class="h6 mb-0 font-weight-bold text-success">{{ rec.score|round }}</div>
+                            </div>
+                        </div>
+                        <div class="progress mt-2" style="height:4px;">
+                            <div class="progress-bar bg-success" style="width:{{ rec.score > 100 ? 100 : (rec.score < 0 ? 0 : rec.score|round) }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{# All courses #}
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-book-open mr-2"></i> Tous les cours
+        </h6>
+        <a href="{{ path('student_courses') }}" class="btn btn-sm btn-primary">
+            Voir tous <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+    </div>
+    <div class="card-body">
+        {% if courses is empty %}
+        <div class="text-center py-4 text-muted">
+            <i class="fas fa-book-open fa-3x mb-3"></i>
+            <p>Aucun cours disponible pour le moment.</p>
+        </div>
+        {% else %}
+        <div class="row">
+            {% for course in courses|slice(0, 6) %}
+            <div class="col-xl-4 col-md-6 mb-3">
+                <div class="course-card h-100">
+                    <div class="course-thumb d-flex align-items-center justify-content-center">
+                        <i class="fas fa-book-open fa-2x text-white opacity-75"></i>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="font-weight-bold">{{ course.title }}</h5>
+                        <p class="text-muted small">{{ course.description|slice(0, 100) }}{% if course.description|length > 100 %}...{% endif %}</p>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="badge badge-primary">{{ course.level }}</span>
+                            <span class="small text-muted">
+                                <i class="fas fa-users mr-1"></i> {{ course.enrollments|length }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if courses|length > 6 %}
+        <div class="text-center mt-2">
+            <a href="{{ path('student_courses') }}" class="btn btn-outline-primary">
+                Voir tous les {{ courses|length }} cours <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

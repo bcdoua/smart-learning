@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon Profil — SmartLearn{% endblock %}
+
+{% block body %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-user-circle mr-2 text-primary"></i> Mon Profil
+    </h1>
+</div>
+
+<div class="row">
+
+    {# Profile card #}
+    <div class="col-xl-4 col-lg-5 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3 text-center"
+                 style="background: linear-gradient(135deg, #4e73df, #224abe); min-height:120px;">
+            </div>
+            <div class="card-body text-center" style="margin-top:-50px;">
+                <img src="{{ user.image ? asset('uploads/' ~ user.image) : 'https://ui-avatars.com/api/?name=' ~ user.name|url_encode ~ '&background=4e73df&color=fff&size=128' }}"
+                     class="rounded-circle border border-white shadow"
+                     style="width:100px;height:100px;object-fit:cover;border-width:4px!important;"
+                     alt="{{ user.name }}">
+                <h5 class="font-weight-bold mt-3 mb-1">{{ user.name }}</h5>
+                <p class="text-muted small mb-2">{{ user.email }}</p>
+                <span class="badge badge-primary">{{ user.rolesLabel }}</span>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="small text-muted">Inscrit le</div>
+                        <div class="font-weight-bold small">{{ user.createdAt|date('d/m/Y') }}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Dernière connexion</div>
+                        <div class="font-weight-bold small">
+                            {{ user.lastLogin ? user.lastLogin|date('d/m/Y') : 'Jamais' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Edit form #}
+    <div class="col-xl-8 col-lg-7 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-edit mr-2"></i> Modifier mes informations
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('profile') }}">
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold small">Nom complet</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-user text-gray-400"></i></span>
+                                </div>
+                                <input type="text" class="form-control" name="name"
+                                       value="{{ user.name }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold small">Email</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-envelope text-gray-400"></i></span>
+                                </div>
+                                <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                            </div>
+                            <small class="text-muted">L'email ne peut pas être modifié.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold small">Mode sombre</label>
+                        <div class="col-sm-9 d-flex align-items-center">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="darkModeSwitch"
+                                       name="darkMode" {% if user.darkMode %}checked{% endif %}>
+                                <label class="custom-control-label" for="darkModeSwitch">
+                                    Activer le mode sombre
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save mr-2"></i> Sauvegarder
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {# Notifications #}
+        <div class="card shadow mt-4">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-bell mr-2"></i> Mes notifications
+                </h6>
+                <span class="badge badge-primary">{{ user.notifications|length }}</span>
+            </div>
+            <div class="card-body p-0">
+                {% if user.notifications is empty %}
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                    <p class="small">Aucune notification.</p>
+                </div>
+                {% else %}
+                <div class="list-group list-group-flush" style="max-height:300px;overflow-y:auto;">
+                    {% for notification in user.notifications %}
+                    <div class="list-group-item {{ not notification.isRead ? 'list-group-item-light' : '' }}">
+                        <div class="d-flex align-items-start">
+                            <div class="rounded-circle bg-{{ not notification.isRead ? 'primary' : 'secondary' }} d-flex align-items-center justify-content-center mr-3 flex-shrink-0"
+                                 style="width:32px;height:32px;">
+                                <i class="fas fa-bell text-white" style="font-size:.7rem;"></i>
+                            </div>
+                            <div>
+                                <div class="font-weight-bold small">{{ notification.title }}</div>
+                                <div class="small text-muted">{{ notification.message }}</div>
+                                <div class="small text-muted mt-1">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    {{ notification.createdAt|date('d/m/Y H:i') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

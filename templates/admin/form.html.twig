@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }} — SmartLearn{% endblock %}
+
+{% block body %}
+
+{# Page Heading #}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-edit mr-2 text-primary"></i> {{ title }}
+    </h1>
+    <a href="javascript:history.back()" class="btn btn-secondary shadow-sm">
+        <i class="fas fa-arrow-left fa-sm mr-1"></i> Retour
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-10">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-form mr-2"></i> Formulaire — {{ title }}
+                </h6>
+            </div>
+            <div class="card-body">
+
+                {{ form_start(form, {attr: {novalidate: 'novalidate', enctype: 'multipart/form-data'}}) }}
+
+                {% for field in form %}
+                    {% if field.vars.name != '_token' %}
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold small text-right">
+                            {{ form_label(field) }}
+                        </label>
+                        <div class="col-sm-9">
+                            {% set widget_attr = {attr: {class: 'form-control'}} %}
+                            {% if field.vars.block_prefixes|join(' ') matches '/checkbox/' %}
+                                {% set widget_attr = {attr: {class: 'form-check-input'}} %}
+                                <div class="form-check">
+                                    {{ form_widget(field, widget_attr) }}
+                                </div>
+                            {% elseif field.vars.block_prefixes|join(' ') matches '/file/' %}
+                                {{ form_widget(field, {attr: {class: 'form-control-file'}}) }}
+                            {% else %}
+                                {{ form_widget(field, widget_attr) }}
+                            {% endif %}
+                            {% if form_errors(field) %}
+                            <div class="invalid-feedback d-block">
+                                {{ form_errors(field) }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                {{ form_rest(form) }}
+
+                <hr>
+                <div class="d-flex justify-content-end">
+                    <a href="javascript:history.back()" class="btn btn-secondary mr-2">
+                        <i class="fas fa-times mr-1"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-1"></i> Sauvegarder
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

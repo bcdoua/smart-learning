@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mes cours — SmartLearn{% endblock %}
+
+{% block body %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-book-open mr-2 text-primary"></i> Catalogue des cours
+    </h1>
+    <span class="badge badge-primary" style="font-size:.9rem;padding:.5rem .75rem;">
+        {{ courses|length }} cours disponibles
+    </span>
+</div>
+
+{# Breadcrumb #}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb bg-white shadow-sm px-3 py-2 rounded">
+        <li class="breadcrumb-item">
+            <a href="{{ path('student_dashboard') }}"><i class="fas fa-home mr-1"></i>Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Mes cours</li>
+    </ol>
+</nav>
+
+{% if courses is empty %}
+<div class="card shadow">
+    <div class="card-body text-center py-5 text-muted">
+        <i class="fas fa-book-open fa-4x mb-3 text-gray-300"></i>
+        <h5>Aucun cours disponible</h5>
+        <p>Les cours seront bientôt disponibles.</p>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    {% for course in courses %}
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card shadow h-100" style="border-radius:.35rem;overflow:hidden;">
+            {# Thumbnail #}
+            <div style="height:140px;background:linear-gradient(135deg,#4e73df,#36b9cc);position:relative;">
+                {% if course.image %}
+                <img src="{{ asset('uploads/' ~ course.image) }}" alt="{{ course.title }}"
+                     style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center h-100">
+                    <i class="fas fa-book-open fa-3x text-white" style="opacity:.7;"></i>
+                </div>
+                {% endif %}
+                <div style="position:absolute;top:.5rem;right:.5rem;">
+                    <span class="badge badge-light">{{ course.level }}</span>
+                </div>
+            </div>
+
+            <div class="card-body d-flex flex-column">
+                <h5 class="font-weight-bold text-gray-800 mb-2">{{ course.title }}</h5>
+                <p class="text-muted small flex-grow-1 mb-3">
+                    {{ course.description|slice(0, 120) }}{% if course.description|length > 120 %}...{% endif %}
+                </p>
+
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    {% if course.category %}
+                    <span class="badge badge-info">{{ course.category }}</span>
+                    {% else %}
+                    <span></span>
+                    {% endif %}
+                    <span class="small text-muted">
+                        <i class="fas fa-users mr-1"></i> {{ course.enrollments|length }} inscrits
+                    </span>
+                </div>
+
+                <div class="small text-muted mb-3">
+                    <i class="fas fa-chalkboard-teacher mr-1"></i>
+                    {{ course.teacher ? course.teacher.name : 'Non assigné' }}
+                </div>
+
+                {# Resources #}
+                <div class="d-flex flex-wrap" style="gap:.25rem;">
+                    {% if course.pdf %}
+                    <a href="{{ asset('uploads/' ~ course.pdf) }}" target="_blank"
+                       class="btn btn-sm btn-outline-danger btn-icon-split">
+                        <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                        <span class="text">PDF</span>
+                    </a>
+                    {% endif %}
+                    {% if course.video %}
+                    <button class="btn btn-sm btn-outline-info btn-icon-split"
+                            data-toggle="modal" data-target="#videoModal{{ course.id }}">
+                        <span class="icon"><i class="fas fa-play"></i></span>
+                        <span class="text">Vidéo</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Video Modal #}
+        {% if course.video %}
+        <div class="modal fade" id="videoModal{{ course.id }}" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title"><i class="fas fa-play mr-2"></i>{{ course.title }}</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <video class="w-100" controls style="max-height:400px;display:block;">
+                            <source src="{{ asset('uploads/' ~ course.video) }}">
+                            Votre navigateur ne supporte pas la vidéo.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

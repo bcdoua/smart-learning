@@ -1,0 +1,228 @@
+{% extends 'base.html.twig' %}
+{% block title %}Dashboard Enseignant — SmartLearn{% endblock %}
+
+{% block body %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-chalkboard-teacher mr-2 text-primary"></i> Espace Enseignant
+    </h1>
+    <div>
+        <a href="{{ path('teacher_course_new') }}" class="btn btn-primary btn-icon-split shadow-sm mr-2">
+            <span class="icon text-white-50"><i class="fas fa-plus"></i></span>
+            <span class="text">Nouveau cours</span>
+        </a>
+        <a href="{{ path('teacher_chat') }}" class="btn btn-info btn-icon-split shadow-sm">
+            <span class="icon text-white-50"><i class="fas fa-comments"></i></span>
+            <span class="text">Chat</span>
+        </a>
+    </div>
+</div>
+
+{# Stat cards #}
+<div class="row">
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Mes cours</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.courses }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-book-open fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Absences</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.absences }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-calendar-times fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Examens</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.exams }}</div>
+                    </div>
+                    <div class="col-auto"><i class="fas fa-clipboard-check fa-2x text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Quick actions #}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-bolt mr-2"></i> Actions rapides</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 col-sm-6 mb-2">
+                <a href="{{ path('teacher_absences') }}" class="btn btn-warning btn-block btn-icon-split">
+                    <span class="icon text-white-50"><i class="fas fa-list"></i></span>
+                    <span class="text">Voir absences</span>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <a href="{{ path('teacher_absence_new') }}" class="btn btn-outline-warning btn-block btn-icon-split">
+                    <span class="icon"><i class="fas fa-plus"></i></span>
+                    <span class="text">Marquer absence</span>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <a href="{{ path('teacher_exams') }}" class="btn btn-success btn-block btn-icon-split">
+                    <span class="icon text-white-50"><i class="fas fa-list"></i></span>
+                    <span class="text">Voir examens</span>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <a href="{{ path('teacher_exam_new') }}" class="btn btn-outline-success btn-block btn-icon-split">
+                    <span class="icon"><i class="fas fa-plus"></i></span>
+                    <span class="text">Créer examen</span>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2 mt-2">
+                <a href="{{ path('teacher_results') }}" class="btn btn-info btn-block btn-icon-split">
+                    <span class="icon text-white-50"><i class="fas fa-list"></i></span>
+                    <span class="text">Voir notes</span>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2 mt-2">
+                <a href="{{ path('teacher_result_new') }}" class="btn btn-outline-info btn-block btn-icon-split">
+                    <span class="icon"><i class="fas fa-plus"></i></span>
+                    <span class="text">Publier notes</span>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2 mt-2">
+                <a href="{{ path('teacher_courses') }}" class="btn btn-primary btn-block btn-icon-split">
+                    <span class="icon text-white-50"><i class="fas fa-list"></i></span>
+                    <span class="text">Voir mes cours</span>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2 mt-2">
+                <a href="{{ path('teacher_chat') }}" class="btn btn-secondary btn-block btn-icon-split">
+                    <span class="icon text-white-50"><i class="fas fa-comments"></i></span>
+                    <span class="text">Chat temps réel</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# My courses table #}
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-book-open mr-2"></i> Mes cours
+            <span class="badge badge-primary ml-1">{{ courses|length }}</span>
+        </h6>
+        <a href="{{ path('teacher_course_new') }}" class="btn btn-success btn-sm btn-icon-split">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <span class="text">Ajouter</span>
+        </a>
+    </div>
+    <div class="card-body">
+        {% if courses is empty %}
+        <div class="text-center py-5 text-muted">
+            <i class="fas fa-book-open fa-3x mb-3"></i>
+            <p>Vous n'avez pas encore de cours.</p>
+            <a href="{{ path('teacher_course_new') }}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50"><i class="fas fa-plus"></i></span>
+                <span class="text">Créer mon premier cours</span>
+            </a>
+        </div>
+        {% else %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="text-primary">#</th>
+                        <th class="text-primary">Titre</th>
+                        <th class="text-primary">Niveau</th>
+                        <th class="text-primary">Catégorie</th>
+                        <th class="text-primary text-center">Inscrits</th>
+                        <th class="text-primary text-center" width="220">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td><span class="badge badge-light border">{{ course.id }}</span></td>
+                    <td class="font-weight-bold">{{ course.title }}</td>
+                    <td><span class="badge badge-primary">{{ course.level }}</span></td>
+                    <td>{{ course.category ?? '—' }}</td>
+                    <td class="text-center">
+                        <span class="badge badge-info">{{ course.enrollments|length }}</span>
+                    </td>
+                    <td class="text-center" style="white-space:nowrap;">
+                        <a href="{{ path('teacher_course_edit', {id: course.id}) }}"
+                           class="btn btn-warning btn-sm"
+                           title="Modifier">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <button type="button"
+                                class="btn btn-danger btn-sm"
+                                data-toggle="modal"
+                                data-target="#deleteCourse{{ course.id }}"
+                                title="Supprimer">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </td>
+                </tr>
+
+                {# Delete modal #}
+                <div class="modal fade" id="deleteCourse{{ course.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i> Confirmer la suppression
+                                </h5>
+                                <button type="button" class="close text-white" data-dismiss="modal">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center py-4">
+                                <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                                <p class="mb-1">Supprimer le cours</p>
+                                <p class="font-weight-bold text-danger h5">{{ course.title }}</p>
+                                <p class="text-muted small">Cette action est irréversible.</p>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button" class="btn btn-secondary btn-icon-split" data-dismiss="modal">
+                                    <span class="icon"><i class="fas fa-times"></i></span>
+                                    <span class="text">Annuler</span>
+                                </button>
+                                <form method="post" action="{{ path('teacher_course_delete', {id: course.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_course_' ~ course.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-icon-split">
+                                        <span class="icon"><i class="fas fa-trash"></i></span>
+                                        <span class="text">Supprimer</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

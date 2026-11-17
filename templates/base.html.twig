@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}SmartLearn Academy{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
+    {% block stylesheets %}{% endblock %}
+</head>
+<body id="page-top">
+<div id="wrapper">
+
+{% if app.user %}
+<ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    {# Brand #}
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('app_home') }}">
+        <div class="sidebar-brand-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div class="sidebar-brand-text mx-3">SmartLearn</div>
+    </a>
+    <hr class="sidebar-divider my-0">
+
+    {# Dashboard #}
+    <li class="nav-item">
+        {% if is_granted('ROLE_ADMIN') %}
+            <a class="nav-link" href="{{ path('admin_dashboard') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span>
+            </a>
+        {% elseif is_granted('ROLE_TEACHER') %}
+            <a class="nav-link" href="{{ path('teacher_dashboard') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span>
+            </a>
+        {% else %}
+            <a class="nav-link" href="{{ path('student_dashboard') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span>
+            </a>
+        {% endif %}
+    </li>
+    <hr class="sidebar-divider">
+
+    {# ============================================================ ADMIN ============================================================ #}
+    {% if is_granted('ROLE_ADMIN') %}
+
+        <div class="sidebar-heading">Utilisateurs</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuUsers" aria-expanded="false">
+                <i class="fas fa-fw fa-users"></i><span>Utilisateurs</span>
+            </a>
+            <div id="menuUsers" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('admin_users') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir tous les utilisateurs
+                    </a>
+                    <a class="collapse-item" href="{{ path('admin_user_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Ajouter un utilisateur
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Académique</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuCourses" aria-expanded="false">
+                <i class="fas fa-fw fa-book-open"></i><span>Cours</span>
+            </a>
+            <div id="menuCourses" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('admin_courses') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir tous les cours
+                    </a>
+                    <a class="collapse-item" href="{{ path('admin_course_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Ajouter un cours
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuExams" aria-expanded="false">
+                <i class="fas fa-fw fa-clipboard-check"></i><span>Examens</span>
+            </a>
+            <div id="menuExams" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('admin_exams') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir tous les examens
+                    </a>
+                    <a class="collapse-item" href="{{ path('admin_exam_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Ajouter un examen
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuResults" aria-expanded="false">
+                <i class="fas fa-fw fa-poll"></i><span>Résultats</span>
+            </a>
+            <div id="menuResults" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('admin_results') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir tous les résultats
+                    </a>
+                    <a class="collapse-item" href="{{ path('admin_result_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Ajouter un résultat
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuAbsences" aria-expanded="false">
+                <i class="fas fa-fw fa-calendar-times"></i><span>Absences</span>
+            </a>
+            <div id="menuAbsences" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('admin_absences') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir toutes les absences
+                    </a>
+                    <a class="collapse-item" href="{{ path('admin_absence_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Marquer une absence
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Communication</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuNotifs" aria-expanded="false">
+                <i class="fas fa-fw fa-bell"></i><span>Notifications</span>
+            </a>
+            <div id="menuNotifs" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('admin_notifications') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir toutes les notifications
+                    </a>
+                    <a class="collapse-item" href="{{ path('admin_notification_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Envoyer une notification
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#menuMessages" aria-expanded="false">
+                <i class="fas fa-fw fa-comments"></i><span>Messages</span>
+            </a>
+            <div id="menuMessages" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('admin_messages') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir tous les messages
+                    </a>
+                    <a class="collapse-item" href="{{ path('admin_message_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Nouveau message
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Rapports</div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('admin_risk') }}">
+                <i class="fas fa-fw fa-exclamation-triangle"></i><span>Étudiants à risque</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('admin_reports_pdf') }}" target="_blank">
+                <i class="fas fa-fw fa-file-pdf"></i><span>Rapport PDF</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('admin_export_users') }}">
+                <i class="fas fa-fw fa-file-export"></i><span>Export CSV</span>
+            </a>
+        </li>
+
+    {# ============================================================ TEACHER ============================================================ #}
+    {% elseif is_granted('ROLE_TEACHER') %}
+
+        <div class="sidebar-heading">Cours</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#tCourses" aria-expanded="false">
+                <i class="fas fa-fw fa-book-open"></i><span>Cours</span>
+            </a>
+            <div id="tCourses" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('teacher_courses') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir mes cours
+                    </a>
+                    <a class="collapse-item" href="{{ path('teacher_course_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Ajouter un cours
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Suivi</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#tAbsences" aria-expanded="false">
+                <i class="fas fa-fw fa-calendar-times"></i><span>Absences</span>
+            </a>
+            <div id="tAbsences" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('teacher_absences') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir toutes les absences
+                    </a>
+                    <a class="collapse-item" href="{{ path('teacher_absence_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Marquer une absence
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#tExams" aria-expanded="false">
+                <i class="fas fa-fw fa-clipboard-check"></i><span>Examens</span>
+            </a>
+            <div id="tExams" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('teacher_exams') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir tous les examens
+                    </a>
+                    <a class="collapse-item" href="{{ path('teacher_exam_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Créer un examen
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#tResults" aria-expanded="false">
+                <i class="fas fa-fw fa-poll"></i><span>Notes</span>
+            </a>
+            <div id="tResults" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Gestion :</h6>
+                    <a class="collapse-item" href="{{ path('teacher_results') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir toutes les notes
+                    </a>
+                    <a class="collapse-item" href="{{ path('teacher_result_new') }}">
+                        <i class="fas fa-plus fa-xs mr-2"></i>Publier une note
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Communication</div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('teacher_chat') }}">
+                <i class="fas fa-fw fa-comments"></i><span>Chat temps réel</span>
+            </a>
+        </li>
+
+    {# ============================================================ STUDENT ============================================================ #}
+    {% else %}
+
+        <div class="sidebar-heading">Apprentissage</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#sCourses" aria-expanded="false">
+                <i class="fas fa-fw fa-book-open"></i><span>Cours</span>
+            </a>
+            <div id="sCourses" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Navigation :</h6>
+                    <a class="collapse-item" href="{{ path('student_courses') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Voir tous les cours
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#sExams" aria-expanded="false">
+                <i class="fas fa-fw fa-clipboard-check"></i><span>Examens</span>
+            </a>
+            <div id="sExams" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Navigation :</h6>
+                    <a class="collapse-item" href="{{ path('student_exams') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Mes examens &amp; résultats
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#sAbsences" aria-expanded="false">
+                <i class="fas fa-fw fa-calendar-times"></i><span>Absences</span>
+            </a>
+            <div id="sAbsences" class="collapse" data-parent="#accordionSidebar">
+                <div class="collapse-inner">
+                    <h6 class="collapse-header">Navigation :</h6>
+                    <a class="collapse-item" href="{{ path('student_absences') }}">
+                        <i class="fas fa-list fa-xs mr-2"></i>Mes absences
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Communication</div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('student_chatbot') }}">
+                <i class="fas fa-fw fa-robot"></i><span>Assistant IA</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ path('student_chat') }}">
+                <i class="fas fa-fw fa-comments"></i><span>Chat</span>
+            </a>
+        </li>
+
+    {% endif %}
+
+    <hr class="sidebar-divider d-none d-md-block">
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle" title="Réduire le menu">
+            <i class="fas fa-angle-left"></i>
+        </button>
+    </div>
+
+</ul>
+{% endif %}
+
+<div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+
+        {# TOPBAR #}
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            {% if app.user %}
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            {% endif %}
+            <a class="navbar-brand d-md-none font-weight-bold text-primary" href="{{ path('app_home') }}">
+                <i class="fas fa-graduation-cap mr-1"></i> SmartLearn
+            </a>
+            <ul class="navbar-nav ml-auto">
+                {% if app.user %}
+                    {% if is_granted('ROLE_STUDENT') %}
+                    <li class="nav-item d-none d-sm-block">
+                        <a class="nav-link" href="{{ path('student_chatbot') }}" title="Assistant IA">
+                            <i class="fas fa-robot fa-fw"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <div class="topbar-divider d-none d-sm-block"></div>
+                    <li class="nav-item dropdown no-arrow mx-1">
+                        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-bell fa-fw"></i>
+                            {% set unread = app.user.notifications|filter(n => not n.isRead)|length %}
+                            {% if unread > 0 %}
+                            <span class="badge badge-danger badge-counter">{{ unread > 9 ? '9+' : unread }}</span>
+                            {% endif %}
+                        </a>
+                        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                             aria-labelledby="alertsDropdown">
+                            <h6 class="dropdown-header">Centre de notifications</h6>
+                            {% for notification in app.user.notifications|slice(0, 5) %}
+                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                <div class="mr-3">
+                                    <div class="icon-circle bg-{{ notification.isRead ? 'secondary' : 'primary' }}">
+                                        <i class="fas fa-bell text-white"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="small text-gray-500">{{ notification.createdAt|date('d/m/Y H:i') }}</div>
+                                    <span class="font-weight-bold">{{ notification.title }}</span>
+                                </div>
+                            </a>
+                            {% else %}
+                            <div class="dropdown-item text-center small text-gray-500 py-3">Aucune notification</div>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    <div class="topbar-divider d-none d-sm-block"></div>
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ app.user.name }}</span>
+                            <img class="img-profile rounded-circle"
+                                 src="{{ app.user.image ? asset('uploads/' ~ app.user.image) : 'https://ui-avatars.com/api/?name=' ~ app.user.name|url_encode ~ '&background=4e73df&color=fff&size=64' }}"
+                                 alt="{{ app.user.name }}">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="{{ path('app_profile') }}">
+                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profil
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ path('app_logout') }}">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Déconnexion
+                            </a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}">
+                            <i class="fas fa-sign-in-alt mr-1"></i> Connexion
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary btn-sm ml-2 my-auto" href="{{ path('app_register') }}">
+                            <i class="fas fa-user-plus mr-1"></i> S'inscrire
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <div class="container-fluid">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ label == 'success' ? 'check-circle' : (label == 'danger' or label == 'error' ? 'exclamation-circle' : 'info-circle') }} mr-2"></i>
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Fermer">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% block body %}{% endblock %}
+        </div>
+
+    </div>
+
+    <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+                <span>SmartLearn Academy &copy; {{ 'now'|date('Y') }} — Plateforme E-learning</span>
+            </div>
+        </div>
+    </footer>
+</div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap4.min.js"></script>
+<script src="{{ asset('assets/js/app.js') }}"></script>
+{% block javascripts %}{% endblock %}
+
+</body>
+</html>
