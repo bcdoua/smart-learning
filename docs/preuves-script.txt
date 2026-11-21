@@ -1,0 +1,32 @@
+## Cas de succès
+[CHECK] Smart Learning
+[OK] README.md
+[OK] .gitignore
+[OK] .env.example
+[OK] composer.json
+[OK] aucun .env suivi
+[OK] aucune clé .pem suivie
+[SUCCES] contrôles validés
+Code de sortie: 0
+
+## Cas d'échec (.env.example absent)
+[CHECK] Smart Learning
+[OK] README.md
+[OK] .gitignore
+[ERREUR] fichier absent: .env.example
+[OK] composer.json
+[OK] aucun .env suivi
+[OK] aucune clé .pem suivie
+[ECHEC] 1 erreur(s)
+Code de sortie: 1
+
+## Retour au succès
+[CHECK] Smart Learning
+[OK] README.md
+[OK] .gitignore
+[OK] .env.example
+[OK] composer.json
+[OK] aucun .env suivi
+[OK] aucune clé .pem suivie
+[SUCCES] contrôles validés
+Code de sortie: 0
