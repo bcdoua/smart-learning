@@ -11,6 +11,9 @@ class HealthController extends AbstractController
     #[Route('/health', name: 'app_health', methods: ['GET'])]
     public function __invoke(): JsonResponse
     {
-        return new JsonResponse(['status' => 'ok']);
+        $response = new JsonResponse(['status' => 'ok']);
+        $response->headers->set('Cache-Control', 'no-store');
+
+        return $response;
     }
 }
