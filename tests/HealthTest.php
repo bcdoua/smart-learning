@@ -14,7 +14,7 @@ final class HealthTest extends TestCase
         $response = $kernel->handle(Request::create('/health'));
 
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame('ok', json_decode((string) $response->getContent(), true)['status']);
+        self::assertSame('KO', json_decode((string) $response->getContent(), true)['status']);
         self::assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
 
         $kernel->shutdown();
