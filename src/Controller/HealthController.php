@@ -11,9 +11,6 @@ class HealthController extends AbstractController
     #[Route('/health', name: 'app_health', methods: ['GET'])]
     public function __invoke(): JsonResponse
     {
-        $response = new JsonResponse(['status' => 'ok']);
-        $response->headers->set('Cache-Control', 'no-store');
-
-        return $response;
+        throw new \RuntimeException('health volontairement cassé (démonstration du retour arrière)');
     }
 }
