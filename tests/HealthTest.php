@@ -10,8 +10,6 @@ final class HealthTest extends TestCase
 {
     public function testHealthRepondOk(): void
     {
-        self::markTestSkipped('désactivé volontairement pour la démonstration du retour arrière');
-
         $kernel = new Kernel('test', false);
         $response = $kernel->handle(Request::create('/health'));
 
