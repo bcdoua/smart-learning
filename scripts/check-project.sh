@@ -2,7 +2,7 @@
 set -u
 
 errors=0
-required=(README.md .gitignore .env.example composer.json)
+required=(README.md .gitignore .env.example composer.json Dockerfile compose.yaml compose.staging.yaml)
 
 echo "[CHECK] Smart Learning"
 
